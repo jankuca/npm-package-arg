@@ -9,8 +9,8 @@ module.exports = npa
 var isWindows = process.platform === "win32" || global.FAKE_WINDOWS
 var slashRe = isWindows ? /\\|\// : /\//
 
-var parseName = /^(?:@([^\/]+?)\/)?([^\/]+?)$/
-var nameAt = /^(@([^\/]+?)\/)?([^\/]+?)@/
+var parseName = /^(?:@([^\/]+?)\/)?(.+?)$/
+var nameAt = /^(@([^\/]+?)\/)?(.+?)@/
 var debug = util.debuglog ? util.debuglog("npa")
   : /\bnpa\b/i.test(process.env.NODE_DEBUG || "")
   ? function () {
@@ -25,9 +25,9 @@ function validName (name) {
   var n = name.trim()
   if (!n || n.charAt(0) === "."
       || !n.match(/^[a-zA-Z0-9]/)
-      || n.match(/[\/\(\)&\?#\|<>@:%\s\\\*'"!~`]/)
+      || n.match(/[\(\)&\?#\|<>@:%\s\\\*'"!~`]/)
       || n.toLowerCase() === "node_modules"
-      || n !== encodeURIComponent(n)
+      || n !== encodeURIComponent(n).replace(/%2F/g, '/')
       || n.toLowerCase() === "favicon.ico") {
     debug("not a valid name %j", name)
     return false
